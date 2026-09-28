@@ -1,0 +1,12 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\InvoiceProcessor.Application\InvoiceProcessor.Application.csproj" />
+      <ProjectReference Include="..\InvoiceProcessor.Domain\InvoiceProcessor.Domain.csproj" />
+    </ItemGroup>
+
+</Project>
