@@ -8,6 +8,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InvoiceProcessor.Infrastruc
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InvoiceProcessor.Api", "src\InvoiceProcessor.Api\InvoiceProcessor.Api.csproj", "{30971AE2-6D3B-4E6F-88D7-34C305252BF5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InvoiceProcessor.UnitTests", "tests\InvoiceProcessor.UnitTests\InvoiceProcessor.UnitTests.csproj", "{4087FA12-DE08-4533-9A8D-BEA15526964B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InvoiceProcessor.IntegrationTests", "tests\InvoiceProcessor.IntegrationTests\InvoiceProcessor.IntegrationTests.csproj", "{1E1E03B9-4542-4EE4-BBF0-A678656756A0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +34,13 @@ Global
 		{30971AE2-6D3B-4E6F-88D7-34C305252BF5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{30971AE2-6D3B-4E6F-88D7-34C305252BF5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{30971AE2-6D3B-4E6F-88D7-34C305252BF5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4087FA12-DE08-4533-9A8D-BEA15526964B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4087FA12-DE08-4533-9A8D-BEA15526964B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4087FA12-DE08-4533-9A8D-BEA15526964B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4087FA12-DE08-4533-9A8D-BEA15526964B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1E1E03B9-4542-4EE4-BBF0-A678656756A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1E1E03B9-4542-4EE4-BBF0-A678656756A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1E1E03B9-4542-4EE4-BBF0-A678656756A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1E1E03B9-4542-4EE4-BBF0-A678656756A0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
