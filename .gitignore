@@ -435,3 +435,22 @@ FodyWeavers.xsd
 # VS Code
 .vscode/
 *.code-workspace
+
+# macOS
+.DS_Store
+
+# Environment / secrets (extends the existing *.env rule)
+.env.*
+!.env.example
+appsettings.*.local.json
+
+# Local invoice files and DB data (real invoices can contain personal/financial data)
+uploads/
+storage/
+.data/
+pgdata/
+
+# Frontend build output
+frontend/dist/
+frontend/coverage/
+*.tsbuildinfo
