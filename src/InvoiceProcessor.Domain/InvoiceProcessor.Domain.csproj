@@ -4,4 +4,9 @@
         
     </PropertyGroup>
 
+    <ItemGroup>
+      <Folder Include="Anomalies\" />
+      <Folder Include="Common\" />
+    </ItemGroup>
+
 </Project>
