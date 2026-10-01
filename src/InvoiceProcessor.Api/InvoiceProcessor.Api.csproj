@@ -2,8 +2,18 @@
 
     
 
+    <PropertyGroup>
+      <UserSecretsId>39194f20-6263-4713-8bcd-e6e0c5fd0994</UserSecretsId>
+    </PropertyGroup>
+
+    
+
     <ItemGroup>
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.7"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.12">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
         <PackageReference Include="Microsoft.OpenApi" Version="2.7.5"/>
     </ItemGroup>
 
