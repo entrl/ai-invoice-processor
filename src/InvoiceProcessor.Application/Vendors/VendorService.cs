@@ -40,7 +40,7 @@ public class VendorService : IVendorService
             Id = vendor.Id,
             Name = vendor.Name,
             VatNumber = vendor.VatNumber,
-            DefaultCurrencyId = vendor.DefoultCategoryId,
+            DefaultCategoryId = vendor.DefoultCategoryId,
             DefaultCategoryName = vendor.DefoultCategory?.Name,
             FirstSeenAt = vendor.FirstSeenAt,
             LastSeenAt = vendor.LastSeenAt

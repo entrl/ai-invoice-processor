@@ -2,6 +2,7 @@ using InvoiceProcessor.Application.Vendors;
 using InvoiceProcessor.Infrastructure.Persistence;
 using InvoiceProcessor.Infrastructure.Persistence.Repositories;
 using Microsoft.EntityFrameworkCore;
+using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,6 +26,7 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    app.MapScalarApiReference();
 }
 
 if (!app.Environment.IsDevelopment())
