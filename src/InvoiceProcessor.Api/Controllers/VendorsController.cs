@@ -1,10 +1,12 @@
 using InvoiceProcessor.Application.Vendors;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace InvoiceProcessor.Api.Controllers;
 
 [ApiController]
 [Route("api/vendors")]
+[Authorize]
 public class VendorsController : ControllerBase
 {
     private readonly IVendorService _vendorService;

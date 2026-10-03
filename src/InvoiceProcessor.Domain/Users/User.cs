@@ -8,6 +8,9 @@ public class User
     public UserRole Role { get; private set; }
     public DateTime CreatedAt { get; private set; }
 
+    private readonly List<RefreshToken> _refreshTokens = [];
+    public IReadOnlyCollection<RefreshToken> RefreshTokens => _refreshTokens.AsReadOnly();
+
     private User()
     {
         Email = null!;
