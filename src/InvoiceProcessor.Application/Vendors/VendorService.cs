@@ -1,3 +1,5 @@
+using InvoiceProcessor.Application.Categories;
+using InvoiceProcessor.Application.Common;
 using InvoiceProcessor.Domain.Vendors;
 
 namespace InvoiceProcessor.Application.Vendors;
@@ -5,15 +7,23 @@ namespace InvoiceProcessor.Application.Vendors;
 public class VendorService : IVendorService
 {
     private readonly IVendorRepository _vendorRepository;
+    private readonly ICategoryRepository _categoryRepository;
 
-    public VendorService(IVendorRepository vendorRepository)
+    public VendorService(IVendorRepository vendorRepository, ICategoryRepository categoryRepository)
     {
         _vendorRepository = vendorRepository;
+        _categoryRepository = categoryRepository;
     }
 
     public async Task<VendorResponse> CreateAsync(CreateVendorRequest request, CancellationToken ct = default)
     {
         var vendor = new Vendor(request.Name, request.VatNumber);
+
+        if (request.DefaultCategoryId is { } categoryId)
+        {
+            var category = await _categoryRepository.GetByIdAsync(categoryId, ct) ?? throw new NotFoundException($"Category {categoryId} was not found");
+            vendor.SetDefoultCategory(category);
+        }
         
         await _vendorRepository.AddAsync(vendor, ct);
         await _vendorRepository.SaveChangesAsync(ct);
