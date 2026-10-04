@@ -1,5 +1,7 @@
 using System.Text;
+using InvoiceProcessor.Api.Middleware;
 using InvoiceProcessor.Application.Auth;
+using InvoiceProcessor.Application.Categories;
 using InvoiceProcessor.Application.Users;
 using InvoiceProcessor.Application.Vendors;
 using InvoiceProcessor.Infrastructure.Auth;
@@ -26,11 +28,13 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddScoped<IVendorRepository, VendorRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 
 //Services
 builder.Services.AddScoped<IVendorService, VendorService>();
 builder.Services.AddScoped<IPasswordHasher, BCryptPasswordHasher>();
 builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IAuthService>(sp =>
 {
     var jwtSettings = sp.GetRequiredService<IOptions<JwtSettings>>().Value;
@@ -42,7 +46,12 @@ builder.Services.AddScoped<IAuthService>(sp =>
         jwtSettings.RefreshTokenExpirationDays);
 });
 
+//validators
 builder.Services.AddScoped<CreateVendorRequestValidator>();
+builder.Services.AddScoped<CreateCategoryRequestValidator>();
+builder.Services.AddScoped<UpdateCategoryRequestValidator>();
+
+builder.Services.AddExceptionHandler<DomainExceptionHandler>();
 
 builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("Jwt"));
 
@@ -74,10 +83,8 @@ if (app.Environment.IsDevelopment())
     app.MapScalarApiReference();
 }
 
-if (!app.Environment.IsDevelopment())
-{
-    app.UseExceptionHandler();
-}
+
+app.UseExceptionHandler();
 
 app.UseHttpsRedirection();
 
