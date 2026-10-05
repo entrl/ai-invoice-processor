@@ -2,6 +2,7 @@ using System.Text;
 using InvoiceProcessor.Api.Middleware;
 using InvoiceProcessor.Application.Auth;
 using InvoiceProcessor.Application.Categories;
+using InvoiceProcessor.Application.Invoices;
 using InvoiceProcessor.Application.Users;
 using InvoiceProcessor.Application.Vendors;
 using InvoiceProcessor.Infrastructure.Auth;
@@ -29,12 +30,14 @@ builder.Services.AddScoped<IVendorRepository, VendorRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<IInvoiceRepository, InvoiceRepository>();
 
 //Services
 builder.Services.AddScoped<IVendorService, VendorService>();
 builder.Services.AddScoped<IPasswordHasher, BCryptPasswordHasher>();
 builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<IInvoiceService, InvoiceService>();
 builder.Services.AddScoped<IAuthService>(sp =>
 {
     var jwtSettings = sp.GetRequiredService<IOptions<JwtSettings>>().Value;
@@ -50,6 +53,7 @@ builder.Services.AddScoped<IAuthService>(sp =>
 builder.Services.AddScoped<CreateVendorRequestValidator>();
 builder.Services.AddScoped<CreateCategoryRequestValidator>();
 builder.Services.AddScoped<UpdateCategoryRequestValidator>();
+builder.Services.AddScoped<CreateInvoiceRequestValidator>();
 
 builder.Services.AddExceptionHandler<DomainExceptionHandler>();
 
