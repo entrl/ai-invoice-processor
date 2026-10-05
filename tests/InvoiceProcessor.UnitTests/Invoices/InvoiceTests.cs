@@ -8,7 +8,7 @@ public class InvoiceTests
     private static Invoice CreateInvoice()
     {
         var vendor = new Vendor("Acme Corp");
-        return new Invoice(vendor, uploadedById: Guid.NewGuid(), invoiceNumber: "INV-001", issueDate: new DateOnly(2026, 1, 15), curency: "EUR", filePath: "/uploads/inv-001.pdf");
+        return new Invoice(vendor, uploadedById: Guid.NewGuid(), invoiceNumber: "INV-001", issueDate: new DateOnly(2026, 1, 15), currency: "EUR", filePath: "/uploads/inv-001.pdf");
     }
 
     [Fact]

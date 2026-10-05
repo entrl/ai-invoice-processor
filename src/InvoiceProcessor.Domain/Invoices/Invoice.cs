@@ -5,23 +5,23 @@ namespace InvoiceProcessor.Domain.Invoices;
 public class Invoice
 {
     public Guid Id { get; private set; }
-    
+
     public Guid VendorId { get; private set; }
     public Vendor Vendor { get; private set; }
-    
+
     public Guid UploadedById { get; private set; }
-    
+
     public string InvoiceNumber { get; private set; }
     public DateOnly IssueDate { get; private set; }
     public DateOnly? DueDate { get; private set; }
     public string Currency { get; private set; }
-    
-    public decimal SubTotal { get; private set; }
+
+    public decimal Subtotal { get; private set; }
     public decimal VatAmount { get; private set; }
     public decimal Total { get; private set; }
-    
+
     public InvoiceStatus Status { get; private set; }
-    public string FilePath { get; private set; }
+    public string? FilePath { get; private set; }
 
     private readonly List<InvoiceLineItem> _lineItems = [];
     public IReadOnlyList<InvoiceLineItem> LineItems => _lineItems.AsReadOnly();
@@ -31,18 +31,24 @@ public class Invoice
         Vendor = null!;
         InvoiceNumber = null!;
         Currency = null!;
-        FilePath = null!;
     }
 
-    public Invoice(Vendor vendor, Guid uploadedById, string invoiceNumber, DateOnly issueDate, string curency,
-        string filePath)
+    public Invoice(
+        Vendor vendor,
+        Guid uploadedById,
+        string invoiceNumber,
+        DateOnly issueDate,
+        string currency,
+        DateOnly? dueDate = null,
+        string? filePath = null)
     {
         VendorId = vendor.Id;
         Vendor = vendor;
         UploadedById = uploadedById;
         InvoiceNumber = invoiceNumber;
         IssueDate = issueDate;
-        Currency = curency;
+        DueDate = dueDate;
+        Currency = currency;
         FilePath = filePath;
         Status = InvoiceStatus.Pending;
     }
@@ -54,7 +60,7 @@ public class Invoice
 
     public void SetTotals(decimal subtotal, decimal vatAmount, decimal total)
     {
-        SubTotal = subtotal;
+        Subtotal = subtotal;
         VatAmount = vatAmount;
         Total = total;
     }
@@ -62,10 +68,8 @@ public class Invoice
     public void Confirm()
     {
         if (Status == InvoiceStatus.Confirmed)
-        {
             throw new InvalidOperationException("Invoice already confirmed");
-        }
-        
+
         Status = InvoiceStatus.Confirmed;
     }
 
