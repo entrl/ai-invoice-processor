@@ -27,6 +27,7 @@ public class InvoiceService (IInvoiceRepository invoiceRepository, IVendorReposi
             invoice.AddLineItem(new InvoiceLineItem(item.Description, item.Quantity, item.UnitPrice, item.VatRate));
         
         invoice.SetTotals(request.Subtotal, request.VatAmount, request.Total);
+        invoice.RunConsistencyCheck();
         vendor.RecordActivity();
         
         await invoiceRepository.AddAsync(invoice, ct);
@@ -71,6 +72,13 @@ public class InvoiceService (IInvoiceRepository invoiceRepository, IVendorReposi
             UnitPrice = li.UnitPrice,
             VatRate = li.VatRate,
             LineTotal = li.LineTotal
+        }).ToList(),
+        AnomalyFlags = i.AnomalyFlags.Select(f => new AnomalyFlagResponse
+        {
+            Code = f.Code,
+            Reason = f.Reason,
+            Severity = f.Severity.ToString(),
+            CreatedAt = f.CreatedAt
         }).ToList()
     };
 }

@@ -38,6 +38,8 @@ public class InvoiceServiceTests
             }
         ]
     };
+    
+    
 
     [Fact]
     public async Task CreateAsync_WithMissingVendor_ThrowsNotFoundAndDoesNotSave()
@@ -92,5 +94,20 @@ public class InvoiceServiceTests
         var result = await _sut.CreateAsync(Guid.NewGuid(), CreateRequest(vendorId));
 
         Assert.Equal("EUR", result.Currency);
+    }
+
+    [Fact]
+    public async Task CreateAsync_WithInconsistentTotals_SavesFlaggedInvoiceWithAnomalyFlags()
+    {
+        var vendorId = Guid.NewGuid();
+        _vendorRepository.GetByIdAsync(vendorId, Arg.Any<CancellationToken>()).Returns(new Vendor("Acme Corp"));
+        var request = CreateRequest(vendorId);
+        request.Total = 130m;
+        
+        var result = await _sut.CreateAsync(Guid.NewGuid(), request);
+        
+        Assert.Equal("Flagged", result.Status);
+        Assert.Contains(result.AnomalyFlags, f => f.Code == "TOTAL_MISMATCH");
+        await _invoiceRepository.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
     }
 }
