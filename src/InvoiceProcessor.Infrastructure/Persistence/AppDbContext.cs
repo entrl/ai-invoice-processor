@@ -1,3 +1,4 @@
+using InvoiceProcessor.Domain.Anomalies;
 using InvoiceProcessor.Domain.Categories;
 using InvoiceProcessor.Domain.Invoices;
 using InvoiceProcessor.Domain.Users;
@@ -19,6 +20,7 @@ public class AppDbContext : DbContext
     public DbSet<Category> Categories => Set<Category>();
     public DbSet<User> Users => Set<User>();
     public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
+    public DbSet<AnomalyFlag> AnomalyFlags => Set<AnomalyFlag>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

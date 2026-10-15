@@ -22,6 +22,40 @@ namespace InvoiceProcessor.Infrastructure.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("InvoiceProcessor.Domain.Anomalies.AnomalyFlag", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("InvoiceId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Reason")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<string>("Severity")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("InvoiceId");
+
+                    b.ToTable("AnomalyFlags");
+                });
+
             modelBuilder.Entity("InvoiceProcessor.Domain.Categories.Category", b =>
                 {
                     b.Property<Guid>("Id")
@@ -239,6 +273,15 @@ namespace InvoiceProcessor.Infrastructure.Migrations
                     b.ToTable("Vendors");
                 });
 
+            modelBuilder.Entity("InvoiceProcessor.Domain.Anomalies.AnomalyFlag", b =>
+                {
+                    b.HasOne("InvoiceProcessor.Domain.Invoices.Invoice", null)
+                        .WithMany("AnomalyFlags")
+                        .HasForeignKey("InvoiceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("InvoiceProcessor.Domain.Invoices.Invoice", b =>
                 {
                     b.HasOne("InvoiceProcessor.Domain.Users.User", null)
@@ -295,6 +338,8 @@ namespace InvoiceProcessor.Infrastructure.Migrations
 
             modelBuilder.Entity("InvoiceProcessor.Domain.Invoices.Invoice", b =>
                 {
+                    b.Navigation("AnomalyFlags");
+
                     b.Navigation("LineItems");
                 });
 
