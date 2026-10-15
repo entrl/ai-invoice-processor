@@ -11,7 +11,10 @@ public class InvoiceRepository(AppDbContext context) : IInvoiceRepository
         return await context.Invoices
             .Include(i => i.Vendor)
             .Include(i => i.LineItems)
+            .Include(i => i.AnomalyFlags)
+            .AsSplitQuery()
             .FirstOrDefaultAsync(i => i.Id == id, ct);
+        
     }
 
     public async Task<List<Invoice>> GetAllAsync(CancellationToken ct = default)
@@ -20,6 +23,8 @@ public class InvoiceRepository(AppDbContext context) : IInvoiceRepository
             .AsNoTracking()
             .Include(i => i.Vendor)
             .Include(i => i.LineItems)
+            .Include(i => i.AnomalyFlags)
+            .AsSingleQuery()
             .OrderByDescending(i => i.IssueDate)
             .ToListAsync(ct);
     }

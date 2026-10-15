@@ -37,6 +37,11 @@ public class InvoiceConfiguration : IEntityTypeConfiguration<Invoice>
             .WithOne()
             .HasForeignKey(i => i.InvoiceId)
             .OnDelete(DeleteBehavior.Cascade);
+        
+        builder.HasMany(i => i.AnomalyFlags)
+            .WithOne()
+            .HasForeignKey(f => f.InvoiceId)
+            .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasIndex(i => new { i.VendorId, i.InvoiceNumber }).IsUnique();
     }

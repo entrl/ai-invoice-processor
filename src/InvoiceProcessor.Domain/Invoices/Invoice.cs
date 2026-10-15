@@ -1,3 +1,4 @@
+using InvoiceProcessor.Domain.Anomalies;
 using InvoiceProcessor.Domain.Vendors;
 
 namespace InvoiceProcessor.Domain.Invoices;
@@ -23,7 +24,10 @@ public class Invoice
     public InvoiceStatus Status { get; private set; }
     public string? FilePath { get; private set; }
 
+    private readonly List<AnomalyFlag> _anomalyFlags = [];
     private readonly List<InvoiceLineItem> _lineItems = [];
+    
+    public IReadOnlyList<AnomalyFlag> AnomalyFlags => _anomalyFlags.AsReadOnly();
     public IReadOnlyList<InvoiceLineItem> LineItems => _lineItems.AsReadOnly();
 
     private Invoice()
@@ -76,5 +80,16 @@ public class Invoice
     public void Flag()
     {
         Status = InvoiceStatus.Flagged;
+    }
+
+    public void RunConsistencyCheck()
+    {
+        var issues = InvoiceConsistencyChecker.Check(this);
+        
+        foreach (var issue in issues)
+            _anomalyFlags.Add(new AnomalyFlag(issue.Code, issue.Message, issue.Severity));
+        
+        if (issues.Count > 0)
+            Flag();
     }
 }
