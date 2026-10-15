@@ -16,4 +16,5 @@ public class InvoiceResponse
     public string Status { get; set; } = string.Empty;
     public string? FilePath { get; set; }
     public List<InvoiceLineItemResponse> LineItems { get; set; } = [];
+    public List<AnomalyFlagResponse> AnomalyFlags { get; set; } = [];
 }
