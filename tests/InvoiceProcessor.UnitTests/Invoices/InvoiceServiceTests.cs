@@ -1,6 +1,8 @@
 using InvoiceProcessor.Application.Common;
 using InvoiceProcessor.Application.Invoices;
 using InvoiceProcessor.Application.Vendors;
+using InvoiceProcessor.Domain.Common;
+using InvoiceProcessor.Domain.Invoices;
 using InvoiceProcessor.Domain.Vendors;
 using NSubstitute;
 
@@ -39,6 +41,7 @@ public class InvoiceServiceTests
         ]
     };
     
+    private static Invoice CreateExistingInvoice() => new(new Vendor("Acme Corp"), Guid.NewGuid(), "INV-001", new DateOnly(2026, 10, 1), "EUR");
     
 
     [Fact]
@@ -108,6 +111,56 @@ public class InvoiceServiceTests
         
         Assert.Equal("Flagged", result.Status);
         Assert.Contains(result.AnomalyFlags, f => f.Code == "TOTAL_MISMATCH");
+        await _invoiceRepository.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
+    }
+    
+    [Fact]
+    public async Task ConfirmAsync_WithMissingInvoice_ThrowsNotFoundAndDoesNotSave()
+    {
+        var id = Guid.NewGuid();
+        _invoiceRepository.GetByIdAsync(id, Arg.Any<CancellationToken>()).Returns((Invoice?)null);
+
+        await Assert.ThrowsAsync<NotFoundException>(() => _sut.ConfirmAsync(id, Guid.NewGuid()));
+
+        await _invoiceRepository.DidNotReceive().SaveChangesAsync(Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task ConfirmAsync_WithPendingInvoice_ConfirmsAndSaves()
+    {
+        var id = Guid.NewGuid();
+        var reviewerId = Guid.NewGuid();
+        _invoiceRepository.GetByIdAsync(id, Arg.Any<CancellationToken>()).Returns(CreateExistingInvoice());
+
+        var result = await _sut.ConfirmAsync(id, reviewerId);
+
+        Assert.Equal("Confirmed", result.Status);
+        Assert.Equal(reviewerId, result.ConfirmedById);
+        await _invoiceRepository.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task ConfirmAsync_WithAlreadyConfirmedInvoice_ThrowsDomainExceptionAndDoesNotSave()
+    {
+        var id = Guid.NewGuid();
+        var invoice = CreateExistingInvoice();
+        invoice.Confirm(Guid.NewGuid());
+        _invoiceRepository.GetByIdAsync(id, Arg.Any<CancellationToken>()).Returns(invoice);
+
+        await Assert.ThrowsAsync<DomainException>(() => _sut.ConfirmAsync(id,  Guid.NewGuid()));
+
+        await _invoiceRepository.DidNotReceive().SaveChangesAsync(Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task FlagAsync_WithPendingInvoice_FlagsAndSaves()
+    {
+        var id = Guid.NewGuid();
+        _invoiceRepository.GetByIdAsync(id, Arg.Any<CancellationToken>()).Returns(CreateExistingInvoice());
+
+        var result = await _sut.FlagAsync(id);
+
+        Assert.Equal("Flagged", result.Status);
         await _invoiceRepository.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
     }
 }

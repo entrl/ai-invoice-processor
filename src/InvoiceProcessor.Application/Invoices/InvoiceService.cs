@@ -48,7 +48,29 @@ public class InvoiceService (IInvoiceRepository invoiceRepository, IVendorReposi
         var invoices = await invoiceRepository.GetAllAsync(ct);
         return invoices.Select(ToResponse).ToList();
     }
-    
+
+    public async Task<InvoiceResponse> ConfirmAsync(Guid id, Guid confirmedById, CancellationToken ct = default)
+    {
+        var invoice = await invoiceRepository.GetByIdAsync(id, ct) 
+            ?? throw new NotFoundException($"Invoice {id} was not found");
+        
+        invoice.Confirm(confirmedById);
+        await invoiceRepository.SaveChangesAsync(ct);
+        
+        return ToResponse(invoice);
+    }
+
+    public async Task<InvoiceResponse> FlagAsync(Guid id, CancellationToken ct = default)
+    {
+        var invoice = await invoiceRepository.GetByIdAsync(id, ct)
+            ?? throw new NotFoundException($"Invoice {id} was not found");
+        
+        invoice.Flag();
+        await invoiceRepository.SaveChangesAsync(ct);
+        
+        return ToResponse(invoice);
+    }
+
     private static InvoiceResponse ToResponse(Invoice i) => new()
     {
         Id = i.Id,
@@ -64,6 +86,9 @@ public class InvoiceService (IInvoiceRepository invoiceRepository, IVendorReposi
         Total = i.Total,
         Status = i.Status.ToString(),
         FilePath = i.FilePath,
+        ConfirmedById = i.ConfirmedById,
+        ConfirmedAt = i.ConfirmedAt,
+        
         LineItems = i.LineItems.Select(li => new InvoiceLineItemResponse
         {
             Id = li.Id,
@@ -73,6 +98,7 @@ public class InvoiceService (IInvoiceRepository invoiceRepository, IVendorReposi
             VatRate = li.VatRate,
             LineTotal = li.LineTotal
         }).ToList(),
+        
         AnomalyFlags = i.AnomalyFlags.Select(f => new AnomalyFlagResponse
         {
             Code = f.Code,

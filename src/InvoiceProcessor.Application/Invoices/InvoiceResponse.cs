@@ -14,6 +14,8 @@ public class InvoiceResponse
     public decimal VatAmount { get; set; }
     public decimal Total { get; set; }
     public string Status { get; set; } = string.Empty;
+    public Guid? ConfirmedById { get; set; }
+    public DateTime? ConfirmedAt { get; set; }
     public string? FilePath { get; set; }
     public List<InvoiceLineItemResponse> LineItems { get; set; } = [];
     public List<AnomalyFlagResponse> AnomalyFlags { get; set; } = [];

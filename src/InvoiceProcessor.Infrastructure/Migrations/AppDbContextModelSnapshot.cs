@@ -81,6 +81,12 @@ namespace InvoiceProcessor.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<DateTime?>("ConfirmedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("ConfirmedById")
+                        .HasColumnType("uuid");
+
                     b.Property<string>("Currency")
                         .IsRequired()
                         .HasMaxLength(3)
@@ -124,6 +130,8 @@ namespace InvoiceProcessor.Infrastructure.Migrations
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ConfirmedById");
 
                     b.HasIndex("UploadedById");
 
@@ -284,6 +292,11 @@ namespace InvoiceProcessor.Infrastructure.Migrations
 
             modelBuilder.Entity("InvoiceProcessor.Domain.Invoices.Invoice", b =>
                 {
+                    b.HasOne("InvoiceProcessor.Domain.Users.User", null)
+                        .WithMany()
+                        .HasForeignKey("ConfirmedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("InvoiceProcessor.Domain.Users.User", null)
                         .WithMany()
                         .HasForeignKey("UploadedById")

@@ -1,4 +1,5 @@
 using InvoiceProcessor.Domain.Anomalies;
+using InvoiceProcessor.Domain.Common;
 using InvoiceProcessor.Domain.Vendors;
 
 namespace InvoiceProcessor.Domain.Invoices;
@@ -23,6 +24,9 @@ public class Invoice
 
     public InvoiceStatus Status { get; private set; }
     public string? FilePath { get; private set; }
+    
+    public Guid? ConfirmedById { get; private set; }
+    public DateTime? ConfirmedAt { get; private set; }
 
     private readonly List<AnomalyFlag> _anomalyFlags = [];
     private readonly List<InvoiceLineItem> _lineItems = [];
@@ -69,16 +73,21 @@ public class Invoice
         Total = total;
     }
 
-    public void Confirm()
+    public void Confirm(Guid confirmedById)
     {
         if (Status == InvoiceStatus.Confirmed)
-            throw new InvalidOperationException("Invoice already confirmed");
-
+            throw new DomainException("Invoice already confirmed");
+        
         Status = InvoiceStatus.Confirmed;
+        ConfirmedById = confirmedById;
+        ConfirmedAt = DateTime.UtcNow;
     }
 
     public void Flag()
     {
+        if (Status == InvoiceStatus.Confirmed)
+            throw new DomainException("A confirmed invoice cannot be flagged.");
+        
         Status = InvoiceStatus.Flagged;
     }
 

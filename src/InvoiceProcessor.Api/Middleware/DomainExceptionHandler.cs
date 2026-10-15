@@ -1,4 +1,5 @@
 using InvoiceProcessor.Application.Common;
+using InvoiceProcessor.Domain.Common;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,6 +14,7 @@ public class DomainExceptionHandler(IProblemDetailsService problemDetailsService
         {
             ConflictException => (StatusCodes.Status409Conflict, "Conflict"),
             NotFoundException => (StatusCodes.Status404NotFound, "Not found"),
+            DomainException => (StatusCodes.Status409Conflict, "Business rule violated"),
             _ => (0, null)
         };
 
