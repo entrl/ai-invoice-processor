@@ -1,3 +1,4 @@
+using InvoiceProcessor.Domain.Common;
 using InvoiceProcessor.Domain.Invoices;
 using InvoiceProcessor.Domain.Vendors;
 
@@ -44,18 +45,18 @@ public class InvoiceTests
     {
         var invoice = CreateInvoice();
         
-        invoice.Confirm();
+        invoice.Confirm(Guid.NewGuid());
         
         Assert.Equal(InvoiceStatus.Confirmed, invoice.Status);
     }
     
     [Fact]
-    public void COnfirm_WhereAlreadyConfirmed_ThrowsInvalidOperationException()
+    public void Confirm_WhereAlreadyConfirmed_ThrowsDomainException()
     {
         var invoice = CreateInvoice();
-        invoice.Confirm();
+        invoice.Confirm(Guid.NewGuid());
         
-        Assert.Throws<InvalidOperationException>(() => invoice.Confirm());
+        Assert.Throws<DomainException>(() => invoice.Confirm(Guid.NewGuid()));
     }
 
     [Fact]
@@ -74,7 +75,7 @@ public class InvoiceTests
         var invoice = CreateInvoice();
         invoice.Flag();
         
-        invoice.Confirm();
+        invoice.Confirm(Guid.NewGuid());
         
         Assert.Equal(InvoiceStatus.Confirmed, invoice.Status);
     }
@@ -102,6 +103,28 @@ public class InvoiceTests
         Assert.Contains(invoice.AnomalyFlags, f => f.Code == "SUBTOTAL_MISMATCH");
         Assert.Contains(invoice.AnomalyFlags, f => f.Code == "TOTAL_MISMATCH");
         Assert.Contains(invoice.AnomalyFlags, f => f.Code == "VAT_MISMATCH");
+    }
+
+    [Fact]
+    public void Confirm_RecordsWhoConfirmedAndWhen()
+    {
+        var invoice = CreateInvoice();
+        var reviewerId = Guid.NewGuid();
+        var before = DateTime.UtcNow;
+        
+        invoice.Confirm(reviewerId);
+        
+        Assert.Equal(reviewerId, invoice.ConfirmedById);
+        Assert.InRange(invoice.ConfirmedAt!.Value, before, DateTime.UtcNow);
+    }
+    
+    [Fact]
+    public void Flag_WhenConfirmed_ThrowsDomainException()
+    {
+        var invoice = CreateInvoice();
+        invoice.Confirm(Guid.NewGuid());
+
+        Assert.Throws<DomainException>(() => invoice.Flag());
     }
     
 }

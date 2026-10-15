@@ -32,6 +32,11 @@ public class InvoiceConfiguration : IEntityTypeConfiguration<Invoice>
             .WithMany()
             .HasForeignKey(i => i.UploadedById)
             .OnDelete(DeleteBehavior.Restrict);
+        
+        builder.HasOne<User>()
+            .WithMany()
+            .HasForeignKey(i => i.ConfirmedById)
+            .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasMany(i => i.LineItems)
             .WithOne()

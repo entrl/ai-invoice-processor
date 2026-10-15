@@ -38,4 +38,12 @@ public class InvoicesController(IInvoiceService invoiceService, CreateInvoiceReq
           var invoice = await invoiceService.CreateAsync(User.GetUserId(), request, ct);
           return CreatedAtAction(nameof(GetById), new { id = invoice.Id }, invoice);
      }
+     
+     [HttpPut("{id:guid}/confirm")]
+     public async Task<ActionResult<InvoiceResponse>> Confirm(Guid id, CancellationToken ct = default)
+          => Ok(await invoiceService.ConfirmAsync(id, User.GetUserId(), ct));
+     
+     [HttpPut("{id:guid}/flag")]
+     public async Task<ActionResult<InvoiceResponse>> Flag(Guid id, CancellationToken ct = default)
+          => Ok(await invoiceService.FlagAsync(id, ct));
 }
